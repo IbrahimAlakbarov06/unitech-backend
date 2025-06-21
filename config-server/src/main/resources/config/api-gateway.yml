@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://ms-auth
+          predicates:
+            - Path=/api/auth/**
+        - id: account-service
+          uri: lb://ms-account
+          predicates:
+            - Path=/api/accounts/**
+        - id: transfer-service
+          uri: lb://ms-transfer
+          predicates:
+            - Path=/api/transfers/**
+        - id: currency-service
+          uri: lb://ms-currency
+          predicates:
+            - Path=/api/currency/**
+        - id: bff-service
+          uri: lb://ms-bff
+          predicates:
+            - Path=/api/bff/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
