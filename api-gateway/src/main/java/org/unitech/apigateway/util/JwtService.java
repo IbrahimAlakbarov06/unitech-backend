@@ -27,11 +27,11 @@ public class JwtService {
         }
     }
 
-    public String extractUsername(String token) {
+    public String getUsernameFromToken(String token) {
         return extractClaims(token).getSubject();
     }
 
-    public Long extractExpiration(String token) {
+    public Long getUserIdFromToken(String token) {
         return extractClaims(token).get("userId", Long.class);
     }
 
