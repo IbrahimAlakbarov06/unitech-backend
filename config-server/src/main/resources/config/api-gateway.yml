@@ -32,6 +32,9 @@ spring:
           predicates:
             - Path=/api/bff/**
 
+jwt:
+  secret: z1vY0wDdS6O0nXBjMRwWTwFjM0Hg7BPK3DJ5rZL84Sk=
+
 eureka:
   client:
     service-url:

@@ -1,5 +1,5 @@
 server:
-  port:8083
+  port: 8083
 
 spring:
   application:
@@ -9,10 +9,9 @@ spring:
     username: postgres
     password: 123
   jpa:
-    hibarnate:
+    hibernate:
       ddl-auto: update
     show-sql: true
-
   rabbitmq:
     host: localhost
     port: 5672

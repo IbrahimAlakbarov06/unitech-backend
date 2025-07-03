@@ -24,7 +24,7 @@ spring:
     password: guest
 
 jwt:
-  secret: mySecretKey
+  secret: z1vY0wDdS6O0nXBjMRwWTwFjM0Hg7BPK3DJ5rZL84Sk=
   expiration: 86400
 
 eureka:
