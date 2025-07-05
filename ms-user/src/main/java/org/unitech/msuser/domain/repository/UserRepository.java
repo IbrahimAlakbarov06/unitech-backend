@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> finByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     Optional<User> findByFin(String fin);
 
@@ -18,9 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query("select User from User where User.status = :status")
+    @Query("SELECT u FROM User u WHERE u.status = :status")
     List<User> findByStatus(@Param("status") Status status);
 
-    @Query("select count (User) from User where User.status = 'ACTIVE'")
+    @Query("SELECT COUNT(u) FROM User u WHERE u.status = 'ACTIVE'")
     Long countActiveUsers();
 }
