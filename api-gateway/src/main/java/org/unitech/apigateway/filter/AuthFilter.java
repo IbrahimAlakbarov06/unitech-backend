@@ -7,13 +7,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.unitech.apigateway.util.JwtService;
+import org.unitech.apigateway.util.JwtUtil;
 
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
 
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -25,12 +25,15 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            String path = exchange.getRequest().getURI().getPath();
-            if (path.contains("/api/auth/login") || path.contains("/api/auth/register")) {
-                return chain.filter(exchange);
+            var request = exchange.getRequest();
+
+            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                return exchange.getResponse().setComplete();
             }
 
-            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            String authHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
@@ -38,26 +41,20 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
             String token = authHeader.substring(7);
 
-            String blacklistKey = "blacklist:token:" + token;
-            if (Boolean.TRUE.equals(redisTemplate.hasKey(blacklistKey))) {
+            if (Boolean.TRUE.equals(redisTemplate.hasKey("blacklist:" + token))
+                    || !jwtUtil.validateToken(token)) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
-            if (!jwtService.validateToken(token)) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
-            }
-
-            Long userId = jwtService.getUserIdFromToken(token);
-            String username = jwtService.getUsernameFromToken(token);
-
-            exchange.getRequest().mutate()
-                    .header("X-User-Id", userId.toString())
+            String userId = jwtUtil.getUserIdFromToken(token);
+            String username = jwtUtil.getUsernameFromToken(token);
+            var modifiedRequest = request.mutate()
+                    .header("X-User-Id", userId)
                     .header("X-Username", username)
                     .build();
 
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(modifiedRequest).build());
         };
     }
 
