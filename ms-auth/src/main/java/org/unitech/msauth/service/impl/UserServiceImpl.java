@@ -3,7 +3,6 @@ package org.unitech.msauth.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.unitech.msauth.domain.entity.User;
 import org.unitech.msauth.domain.repository.UserRepository;
@@ -13,7 +12,6 @@ import org.unitech.msauth.mapper.UserMapper;
 import org.unitech.msauth.model.dto.event.UserCreatedEvent;
 import org.unitech.msauth.model.dto.event.UserDeletedEvent;
 import org.unitech.msauth.model.dto.event.UserUpdatedEvent;
-import org.unitech.msauth.model.dto.request.UserCreateRequest;
 import org.unitech.msauth.model.dto.request.UserUpdateRequest;
 import org.unitech.msauth.model.dto.resposne.UserResponse;
 import org.unitech.msauth.model.enums.Status;
@@ -29,31 +27,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
     private final RabbitTemplate rabbitTemplate;
 
-    @Override
-    public UserResponse createUser(UserCreateRequest request) {
-
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("User with email " + request.getEmail() + " already exists");
-        }
-
-        if (userRepository.existsByFin(request.getFin())) {
-            throw new UserAlreadyExistsException("User with FIN " + request.getFin() + " already exists");
-        }
-
-        User user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        User savedUser = userRepository.save(user);
-
-        publishUserCreatedEvent(savedUser);
-
-        return userMapper.toResponse(savedUser);
-    }
 
     @Override
     public List<UserResponse> getAllUsers() {

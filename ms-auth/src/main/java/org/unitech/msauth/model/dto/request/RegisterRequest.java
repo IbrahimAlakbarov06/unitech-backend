@@ -12,7 +12,7 @@ import org.unitech.msauth.model.enums.UserRole;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreateRequest {
+public class RegisterRequest {
 
     @NotBlank(message = "Full name is required")
     @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")

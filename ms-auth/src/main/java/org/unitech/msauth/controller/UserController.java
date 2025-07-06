@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.unitech.msauth.model.dto.request.UserCreateRequest;
+import org.unitech.msauth.model.dto.request.RegisterRequest;
 import org.unitech.msauth.model.dto.request.UserUpdateRequest;
 import org.unitech.msauth.model.dto.resposne.UserResponse;
 import org.unitech.msauth.model.enums.Status;
@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterRequest request) {
         UserResponse userResponse = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }

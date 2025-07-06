@@ -2,7 +2,7 @@ package org.unitech.msauth.mapper;
 
 import org.springframework.stereotype.Component;
 import org.unitech.msauth.domain.entity.User;
-import org.unitech.msauth.model.dto.request.UserCreateRequest;
+import org.unitech.msauth.model.dto.request.RegisterRequest;
 import org.unitech.msauth.model.dto.request.UserUpdateRequest;
 import org.unitech.msauth.model.dto.resposne.UserResponse;
 import org.unitech.msauth.model.enums.Status;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Component
 public class UserMapper {
 
-    public User toEntity(UserCreateRequest dto) {
+    public User toEntity(RegisterRequest dto) {
         if (dto == null) {
             return null;
         }

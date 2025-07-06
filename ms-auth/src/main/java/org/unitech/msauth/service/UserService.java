@@ -1,6 +1,5 @@
 package org.unitech.msauth.service;
 
-import org.unitech.msauth.model.dto.request.UserCreateRequest;
 import org.unitech.msauth.model.dto.request.UserUpdateRequest;
 import org.unitech.msauth.model.dto.resposne.UserResponse;
 import org.unitech.msauth.model.enums.Status;
@@ -8,7 +7,6 @@ import org.unitech.msauth.model.enums.Status;
 import java.util.List;
 
 public interface UserService {
-    UserResponse createUser(UserCreateRequest request);
 
     List<UserResponse> getAllUsers();
 
