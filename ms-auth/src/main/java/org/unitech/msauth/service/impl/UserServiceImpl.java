@@ -9,9 +9,6 @@ import org.unitech.msauth.domain.repository.UserRepository;
 import org.unitech.msauth.exception.UserAlreadyExistsException;
 import org.unitech.msauth.exception.UserNotFoundException;
 import org.unitech.msauth.mapper.UserMapper;
-import org.unitech.msauth.model.dto.event.UserCreatedEvent;
-import org.unitech.msauth.model.dto.event.UserDeletedEvent;
-import org.unitech.msauth.model.dto.event.UserUpdatedEvent;
 import org.unitech.msauth.model.dto.request.UserUpdateRequest;
 import org.unitech.msauth.model.dto.resposne.UserResponse;
 import org.unitech.msauth.model.enums.Status;
@@ -57,7 +54,13 @@ public class UserServiceImpl implements UserService {
         userMapper.updateEntity(request, user);
         User updatedUser = userRepository.save(user);
 
-        publishUserUpdatedEvent(updatedUser);
+        try {
+            rabbitTemplate.convertAndSend("user.update",
+                    "User updated: " + updatedUser.getEmail() + " with ID: " + updatedUser.getId());
+            log.info("Update event sent to RabbitMQ for user: {}", updatedUser.getEmail());
+        } catch (Exception e) {
+            log.warn("Failed to send update event to RabbitMQ: {}", e.getMessage());
+        }
 
         return userMapper.toResponse(updatedUser);
     }
@@ -71,7 +74,13 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        publishUserDeletedEvent(user);
+        try {
+            rabbitTemplate.convertAndSend("user.delete",
+                    "User deleted: " + user.getEmail() + " with ID: " + user.getId());
+            log.info("Delete event sent to RabbitMQ for user: {}", user.getEmail());
+        } catch (Exception e) {
+            log.warn("Failed to send delete event to RabbitMQ: {}", e.getMessage());
+        }
     }
 
     @Override
@@ -97,57 +106,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long getActiveUsersCount() {
         return userRepository.countActiveUsers();
-    }
-
-    private void publishUserCreatedEvent(User user) {
-        try {
-            UserCreatedEvent eventDto = UserCreatedEvent.builder()
-                    .userId(user.getId())
-                    .email(user.getEmail())
-                    .fullName(user.getFullName())
-                    .fin(user.getFin())
-                    .role(user.getRole())
-                    .status(user.getStatus())
-                    .createdAt(LocalDateTime.now())
-                    .build();
-
-            rabbitTemplate.convertAndSend("user.exchange", "user.created", eventDto);
-            log.info("User created event published for user id: {}", user.getId());
-        } catch (Exception e) {
-            log.error("Failed to publish user created event for user id: {}", user.getId(), e);
-        }
-    }
-
-    private void publishUserUpdatedEvent(User user) {
-        try {
-            UserUpdatedEvent eventDto = UserUpdatedEvent.builder()
-                    .userId(user.getId())
-                    .email(user.getEmail())
-                    .fullName(user.getFullName())
-                    .role(user.getRole())
-                    .status(user.getStatus())
-                    .updatedAt(LocalDateTime.now())
-                    .build();
-
-            rabbitTemplate.convertAndSend("user.exchange", "user.updated", eventDto);
-            log.info("User updated event published for user id: {}", user.getId());
-        } catch (Exception e) {
-            log.error("Failed to publish user updated event for user id: {}", user.getId(), e);
-        }
-    }
-
-    private void publishUserDeletedEvent(User user) {
-        try {
-            UserDeletedEvent eventDto = UserDeletedEvent.builder()
-                    .userId(user.getId())
-                    .email(user.getEmail())
-                    .deletedAt(LocalDateTime.now())
-                    .build();
-
-            rabbitTemplate.convertAndSend("user.exchange", "user.deleted", eventDto);
-            log.info("User deleted event published for user id: {}", user.getId());
-        } catch (Exception e) {
-            log.error("Failed to publish user deleted event for user id: {}", user.getId(), e);
-        }
     }
 }
