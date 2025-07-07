@@ -2,7 +2,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY target/ms-auth-*.jar app.jar
+COPY target/ms-auth-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8081
 
