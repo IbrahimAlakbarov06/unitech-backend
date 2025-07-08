@@ -50,18 +50,6 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<UserResponse>> getUsersByStatus(@PathVariable Status status) {
-        List<UserResponse> users = userService.getUsersByStatus(status);
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/count/active")
-    public ResponseEntity<Long> getActiveUsersCount() {
-        Long count = userService.getActiveUsersCount();
-        return ResponseEntity.ok(count);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

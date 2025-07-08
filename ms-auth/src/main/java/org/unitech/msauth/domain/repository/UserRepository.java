@@ -19,10 +19,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByFin(String fin);
 
     boolean existsByEmail(String email);
-
-    @Query("SELECT u FROM User u WHERE u.status = :status")
-    List<User> findByStatus(@Param("status") Status status);
-
-    @Query("SELECT COUNT(u) FROM User u WHERE u.status = 'ACTIVE'")
-    Long countActiveUsers();
 }

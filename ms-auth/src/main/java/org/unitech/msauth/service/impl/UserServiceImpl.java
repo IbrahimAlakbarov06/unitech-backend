@@ -96,15 +96,4 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with fin: " + fin + " not found"));
         return userMapper.toResponse(user);
     }
-
-    @Override
-    public List<UserResponse> getUsersByStatus(Status status) {
-        List<User> users = userRepository.findByStatus(status);
-        return userMapper.toResponseList(users);
-    }
-
-    @Override
-    public Long getActiveUsersCount() {
-        return userRepository.countActiveUsers();
-    }
 }

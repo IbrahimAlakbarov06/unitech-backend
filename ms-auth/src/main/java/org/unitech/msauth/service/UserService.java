@@ -19,8 +19,4 @@ public interface UserService {
     UserResponse getUserByEmail(String email);
 
     UserResponse getUserByFin(String fin);
-
-    List<UserResponse> getUsersByStatus(Status status);
-
-    Long getActiveUsersCount();
 }
