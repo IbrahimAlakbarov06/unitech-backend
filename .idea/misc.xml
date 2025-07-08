@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
         <option value="$PROJECT_DIR$/ms-user/pom.xml" />
         <option value="$PROJECT_DIR$/ms-autha/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-account/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
