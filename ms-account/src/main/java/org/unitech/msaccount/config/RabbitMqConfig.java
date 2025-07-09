@@ -13,18 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
 
     @Bean
-    public Queue accountCreatedQueue() {
-        return new Queue("account.created", true);
-    }
-
-    @Bean
-    public Queue accountBlockedQueue() {
-        return new Queue("account.blocked", true);
-    }
-
-    @Bean
-    public Queue pinUpdatedQueue() {
-        return new Queue("account.pin.updated", true);
+    public Queue accountEventsQueue() {
+        return new Queue("account.events", true);
     }
 
     @Bean

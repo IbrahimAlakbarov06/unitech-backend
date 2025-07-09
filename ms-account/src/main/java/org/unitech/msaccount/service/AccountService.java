@@ -11,10 +11,12 @@ import org.unitech.msaccount.exception.NotFoundException;
 import org.unitech.msaccount.mapper.AccountMapper;
 import org.unitech.msaccount.model.dto.AccountDto;
 import org.unitech.msaccount.model.dto.request.CreateAccountRequest;
+import org.unitech.msaccount.model.dto.request.DepositRequest;
 import org.unitech.msaccount.model.dto.request.UpdatePinRequest;
 import org.unitech.msaccount.model.dto.response.AccountResponse;
 import org.unitech.msaccount.model.enums.AccountStatus;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -47,13 +49,7 @@ public class AccountService {
 
         Account savedAccount = accountRepository.save(account);
 
-        try {
-            rabbitTemplate.convertAndSend("account.created",
-                    "Account created for user: " + request.getUserId() + " with card: " + savedAccount.getCartNumber());
-            log.info("Account creation event sent to RabbitMQ for user: {}", request.getUserId());
-        } catch (Exception e) {
-            log.warn("Failed to send account creation event to RabbitMQ: {}", e.getMessage());
-        }
+        sendEvent("ACCOUNT_CREATED", account.getId());
 
         return accountMapper.toResponse(savedAccount);
     }
@@ -65,13 +61,7 @@ public class AccountService {
         account.setStatus(AccountStatus.BLOCKED);
         accountRepository.save(account);
 
-        try {
-            rabbitTemplate.convertAndSend("account.blocked",
-                    "Account blocked: " + accountId);
-            log.info("Account block event sent to RabbitMQ for account: {}", accountId);
-        } catch (Exception e) {
-            log.warn("Failed to send account block event to RabbitMQ: {}", e.getMessage());
-        }
+        sendEvent("ACCOUNT_BLOCKED", account.getId());
     }
 
     public AccountResponse updatePin(Long accountId, UpdatePinRequest request) {
@@ -85,13 +75,7 @@ public class AccountService {
         account.setPin(request.getNewPin());
         Account updatedAccount = accountRepository.save(account);
 
-        try {
-            rabbitTemplate.convertAndSend("account.pin.updated",
-                    "PIN updated for account: " + accountId);
-            log.info("PIN update event sent to RabbitMQ for account: {}", accountId);
-        } catch (Exception e) {
-            log.warn("Failed to send PIN update event to RabbitMQ: {}", e.getMessage());
-        }
+        sendEvent("ACCOUNT_UPDATED_PIN", updatedAccount.getId());
 
         return accountMapper.toResponse(updatedAccount);
     }
@@ -101,10 +85,36 @@ public class AccountService {
         return accountMapper.toResponseList(accounts);
     }
 
-    public AccountResponse getUserById(Long accountId) {
+    public AccountResponse getAccountById(Long accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NotFoundException("Account not found with ID: " + accountId));
 
         return accountMapper.toResponse(account);
+    }
+
+    public AccountResponse deposit(Long accountId, DepositRequest request) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("Account not found with ID: " + accountId));
+
+        if (request.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+
+        account.setBalance(account.getBalance().add(request.getAmount()));
+        Account updatedAccount = accountRepository.save(account);
+
+        sendEvent("ACCOUNT_DEPOSITED", updatedAccount.getId());
+
+        return accountMapper.toResponse(updatedAccount);
+    }
+
+    private void sendEvent(String eventType, Long accountId) {
+        try {
+            String message = eventType + ": " + accountId + "at " + System.currentTimeMillis();
+            rabbitTemplate.convertAndSend("account.events", message);
+            log.info("Event sent to RabbitMQ for account: " + accountId);
+        } catch (Exception e) {
+            log.warn("Failed to send event to RabbitMQ: {}", e.getMessage());
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.unitech.msaccount.model.dto.request.CreateAccountRequest;
+import org.unitech.msaccount.model.dto.request.DepositRequest;
 import org.unitech.msaccount.model.dto.request.UpdatePinRequest;
 import org.unitech.msaccount.model.dto.response.AccountResponse;
 import org.unitech.msaccount.service.AccountService;
@@ -45,5 +46,18 @@ public class AccountController {
     public ResponseEntity<Void> blockAccount(@PathVariable Long accountId) {
         accountService.blockAccount(accountId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{accountId}/deposit")
+    public ResponseEntity<AccountResponse> deposit(
+            @PathVariable Long accountId,
+            @RequestBody DepositRequest request) {
+        return ResponseEntity.ok(accountService.deposit(accountId, request));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
+        AccountResponse accountResponse = accountService.getAccountById(id);
+        return ResponseEntity.ok(accountResponse);
     }
 }

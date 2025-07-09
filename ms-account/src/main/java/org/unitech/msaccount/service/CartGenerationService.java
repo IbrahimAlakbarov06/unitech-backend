@@ -33,6 +33,4 @@ public class CartGenerationService {
     private String cvvGenerator() {
         return String.valueOf(100+ random.nextInt(9000));
     }
-
-
 }
