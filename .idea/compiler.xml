@@ -10,13 +10,14 @@
         <module name="eureka-server" />
         <module name="ms-auth" />
       </profile>
-      <profile name="Annotation profile for ms-account" enabled="true">
+      <profile name="Annotation profile for ms-currency" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
+        <module name="ms-currency" />
         <module name="ms-account" />
       </profile>
     </annotationProcessing>
@@ -31,6 +32,7 @@
       <module name="eureka-server" options="-parameters" />
       <module name="ms-account" options="-parameters" />
       <module name="ms-auth" options="-parameters" />
+      <module name="ms-currency" options="-parameters" />
     </option>
   </component>
 </project>
