@@ -54,13 +54,7 @@ public class UserServiceImpl implements UserService {
         userMapper.updateEntity(request, user);
         User updatedUser = userRepository.save(user);
 
-        try {
-            rabbitTemplate.convertAndSend("user.update",
-                    "User updated: " + updatedUser.getEmail() + " with ID: " + updatedUser.getId());
-            log.info("Update event sent to RabbitMQ for user: {}", updatedUser.getEmail());
-        } catch (Exception e) {
-            log.warn("Failed to send update event to RabbitMQ: {}", e.getMessage());
-        }
+        sendEvent("USER_UPDATED", updatedUser.getEmail());
 
         return userMapper.toResponse(updatedUser);
     }
@@ -74,13 +68,7 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        try {
-            rabbitTemplate.convertAndSend("user.delete",
-                    "User deleted: " + user.getEmail() + " with ID: " + user.getId());
-            log.info("Delete event sent to RabbitMQ for user: {}", user.getEmail());
-        } catch (Exception e) {
-            log.warn("Failed to send delete event to RabbitMQ: {}", e.getMessage());
-        }
+        sendEvent("USER_DELETED", user.getEmail());
     }
 
     @Override
@@ -95,5 +83,15 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByFin(fin)
                 .orElseThrow(() -> new UserNotFoundException("User with fin: " + fin + " not found"));
         return userMapper.toResponse(user);
+    }
+
+    private void sendEvent(String eventType, String userEmail) {
+        try {
+            String message = eventType + ": " + userEmail + "at" + System.currentTimeMillis();
+            rabbitTemplate.convertAndSend("user.events", message);
+            log.info("Event sent: {}", userEmail);
+        } catch (Exception e) {
+            log.warn("Failed to send event to RabbitMQ: {}", e.getMessage());
+        }
     }
 }

@@ -13,28 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Bean
-    public Queue userRegistrationQueue() {
-        return new Queue("user.registration", true);
-    }
-
-    @Bean
-    public Queue userLoginQueue() {
-        return new Queue("user.login", true);
-    }
-
-    @Bean
-    public Queue userLogoutQueue() {
-        return new Queue("user.logout", true);
-    }
-
-    @Bean
-    public Queue userUpdateQueue() {
-        return new Queue("user.update", true);
-    }
-
-    @Bean
-    public Queue userDeleteQueue() {
-        return new Queue("user.delete", true);
+    public Queue userEventsQueue() {
+        return new Queue("user.events", true);
     }
 
     @Bean

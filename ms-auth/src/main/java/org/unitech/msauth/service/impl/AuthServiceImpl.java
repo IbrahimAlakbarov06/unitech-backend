@@ -49,13 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtService.generateToken(user.getEmail(), user.getId());
 
-        try {
-            rabbitTemplate.convertAndSend("user.login",
-                    "User logged in: " + user.getEmail() + " at " + System.currentTimeMillis());
-            log.info("Login event sent to RabbitMQ for user: {}", user.getEmail());
-        } catch (Exception e) {
-            log.warn("Failed to send login event to RabbitMQ: {}", e.getMessage());
-        }
+        sendEvent("USER_LOGIN", user.getEmail());
 
         return LoginResponse.builder()
                 .token(token)
@@ -78,13 +72,8 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User saveduser = userRepository.save(user);
-        try {
-            rabbitTemplate.convertAndSend("user.registration",
-                    "User registered: " + saveduser.getEmail() + " with ID: " + saveduser.getId());
-            log.info("Registration event sent to RabbitMQ for user: {}", saveduser.getEmail());
-        } catch (Exception e) {
-            log.warn("Failed to send registration event to RabbitMQ: {}", e.getMessage());
-        }
+
+        sendEvent("USER_REGISTER", saveduser.getEmail());
 
         return userMapper.toResponse(saveduser);
     }
@@ -96,9 +85,7 @@ public class AuthServiceImpl implements AuthService {
             redisTemplate.opsForValue().set("blacklist:" + token, "true", expiration, TimeUnit.MILLISECONDS);
 
             String username = jwtService.getUsernameFromToken(token);
-            rabbitTemplate.convertAndSend("user.logout",
-                    "User logged out: " + username + " at " + System.currentTimeMillis());
-            log.info("Logout event sent to RabbitMQ for user: {}", username);
+            sendEvent("USER_LOGOUT", username);
         } catch (Exception e) {
             log.warn("Failed to process logout properly: {}", e.getMessage());
         }
@@ -116,5 +103,15 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return userMapper.toResponse(user);
+    }
+
+    private void sendEvent(String eventType, String userEmail) {
+        try {
+            String message =  eventType + ": " + userEmail + " at " + System.currentTimeMillis();
+            rabbitTemplate.convertAndSend("user.events", message);
+            log.info("Event sent: {}", message);
+    } catch (Exception e) {
+            log.warn("Failed to send event to RabbitMQ: {}", e.getMessage());
+        }
     }
 }
