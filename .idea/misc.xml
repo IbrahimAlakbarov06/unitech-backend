@@ -12,6 +12,7 @@
         <option value="$PROJECT_DIR$/ms-autha/pom.xml" />
         <option value="$PROJECT_DIR$/ms-account/pom.xml" />
         <option value="$PROJECT_DIR$/ms-currency/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-transfer/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
