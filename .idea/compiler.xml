@@ -21,7 +21,7 @@
         <module name="ms-currency" />
         <module name="ms-account" />
       </profile>
-      <profile name="Annotation profile for ms-transfer" enabled="true">
+      <profile name="Annotation profile for ms-bff" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -29,6 +29,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="ms-transfer" />
+        <module name="ms-bff" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -42,6 +43,7 @@
       <module name="eureka-server" options="-parameters" />
       <module name="ms-account" options="-parameters" />
       <module name="ms-auth" options="-parameters" />
+      <module name="ms-bff" options="-parameters" />
       <module name="ms-currency" options="-parameters" />
       <module name="ms-transfer" options="-parameters" />
     </option>
