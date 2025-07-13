@@ -3,6 +3,8 @@ package org.unitech.mstransfer.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.unitech.mstransfer.domain.entity.Transfer;
 import org.unitech.mstransfer.domain.repo.TransferDao;
@@ -46,6 +48,7 @@ public class TransferService {
         }
 
         Transfer transfer = transferMapper.toEntity(transferRequest);
+        transfer.setUserId(fromAccount.getId());
         transfer.setExchangeRate(currencyResponse.getRate());
         transfer.setConvertedAmount(convertedAmount);
         transfer.setStatus(TransferStatus.PENDING);
@@ -67,6 +70,12 @@ public class TransferService {
         }
 
         return transferMapper.toResponse(savedTransfer);
+    }
+
+    public List<TransferResponse> getRecentTransfersByUser(Long userId, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<Transfer> transfers = transferDao.findRecentTransfersByUserId(userId, pageable);
+        return transferMapper.toResponseList(transfers);
     }
 
     public List<TransferResponse> getTransfersByAccount(Long accountId) {

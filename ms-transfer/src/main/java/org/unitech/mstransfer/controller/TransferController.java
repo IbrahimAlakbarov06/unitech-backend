@@ -34,4 +34,12 @@ public class TransferController {
         List<TransferResponse> responses = transferService.getTransfersByAccount(accountId);
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/user/{userId}/recent")
+    public ResponseEntity<List<TransferResponse>> getRecentTransfersByUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "10") int limit) {
+        List<TransferResponse> responses = transferService.getRecentTransfersByUser(userId, limit);
+        return ResponseEntity.ok(responses);
+    }
 }
