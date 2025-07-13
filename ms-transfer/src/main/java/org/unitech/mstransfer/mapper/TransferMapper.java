@@ -5,6 +5,7 @@ import org.unitech.mstransfer.domain.entity.Transfer;
 import org.unitech.mstransfer.model.dto.request.TransferRequest;
 import org.unitech.mstransfer.model.dto.response.TransferResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,12 +20,14 @@ public class TransferMapper {
         transfer.setCurrencyFrom(request.getCurrencyFrom());
         transfer.setCurrencyTo(request.getCurrencyTo());
         transfer.setDescription(request.getDescription());
+        transfer.setCreatedAt(LocalDateTime.now());
         return transfer;
     }
 
     public TransferResponse toResponse(Transfer transfer) {
         TransferResponse response = new TransferResponse();
         response.setId(transfer.getId());
+        response.setUserId(transfer.getUserId());
         response.setFromAccountId(transfer.getFromAccountId());
         response.setToAccountId(transfer.getToAccountId());
         response.setAmount(transfer.getAmount());

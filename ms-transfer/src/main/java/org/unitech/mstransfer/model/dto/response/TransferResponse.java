@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TransferResponse {
     private Long id;
+    private Long userId;
     private Long fromAccountId;
     private Long toAccountId;
     private BigDecimal amount;
