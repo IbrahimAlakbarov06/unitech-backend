@@ -19,9 +19,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="ms-currency" />
-        <module name="ms-account" />
       </profile>
-      <profile name="Annotation profile for ms-bff" enabled="true">
+      <profile name="Annotation profile for ms-account" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -29,6 +28,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="ms-transfer" />
+        <module name="ms-account" />
         <module name="ms-bff" />
       </profile>
     </annotationProcessing>
