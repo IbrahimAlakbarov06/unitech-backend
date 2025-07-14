@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@Entity
+@Table(name = "accounts")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account {
