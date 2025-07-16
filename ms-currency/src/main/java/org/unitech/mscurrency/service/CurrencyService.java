@@ -42,25 +42,25 @@ public class CurrencyService {
             return new BigDecimal("1.70");
         }
         if ("EUR".equalsIgnoreCase(from) && "AZN".equalsIgnoreCase(to)) {
-            return new BigDecimal("1.85");
+            return new BigDecimal("1.98");
         }
         if ("AZN".equalsIgnoreCase(from) && "USD".equalsIgnoreCase(to)) {
             return new BigDecimal("0.59");
         }
         if ("AZN".equalsIgnoreCase(from) && "EUR".equalsIgnoreCase(to)) {
-            return new BigDecimal("0.54");
+            return new BigDecimal("0.51");
         }
         if ("TRY".equalsIgnoreCase(from) && "AZN".equalsIgnoreCase(to)) {
-            return new BigDecimal("0.90");
+            return new BigDecimal("0.04");
         }
         if ("AZN".equalsIgnoreCase(from) && "TRY".equalsIgnoreCase(to)) {
-            return new BigDecimal("1.10");
+            return new BigDecimal("23.68");
         }
         if ("TRY".equalsIgnoreCase(from) && "USD".equalsIgnoreCase(to)) {
-            return new BigDecimal("0.18");
+            return new BigDecimal("0.03");
         }
         if ("USD".equalsIgnoreCase(from) && "TRY".equalsIgnoreCase(to)) {
-            return new BigDecimal("5.50");
+            return new BigDecimal("40.25");
         }
         return new BigDecimal("1.00");
     }
