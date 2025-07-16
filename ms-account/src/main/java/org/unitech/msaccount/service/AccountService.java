@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitech.msaccount.domain.entity.Account;
 import org.unitech.msaccount.domain.repo.AccountRepository;
+import org.unitech.msaccount.exception.InsufficientFundsException;
 import org.unitech.msaccount.exception.InvalidPinException;
 import org.unitech.msaccount.exception.NotFoundException;
 import org.unitech.msaccount.mapper.AccountMapper;
@@ -17,6 +19,7 @@ import org.unitech.msaccount.model.dto.response.AccountResponse;
 import org.unitech.msaccount.model.enums.AccountStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -85,10 +88,15 @@ public class AccountService {
         return accountMapper.toResponseList(accounts);
     }
 
+    public AccountDto getAccountDetails(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("Account not found"));
+        return accountMapper.toDto(account);
+    }
+
     public AccountResponse getAccountById(Long accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new NotFoundException("Account not found with ID: " + accountId));
-
+                .orElseThrow(() -> new NotFoundException("Account not found"));
         return accountMapper.toResponse(account);
     }
 
@@ -100,12 +108,32 @@ public class AccountService {
             throw new IllegalArgumentException("Amount must be greater than zero");
         }
 
+        if(account.getStatus() == AccountStatus.BLOCKED) {
+            throw new IllegalArgumentException("Account is blocked");
+        }
+
         account.setBalance(account.getBalance().add(request.getAmount()));
         Account updatedAccount = accountRepository.save(account);
 
         sendEvent("ACCOUNT_DEPOSITED", updatedAccount.getId());
 
         return accountMapper.toResponse(updatedAccount);
+    }
+    @Transactional
+    public void updateBalance(Long accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("Account not found with ID: " + accountId));
+
+        BigDecimal newBalance = account.getBalance().add(amount);
+
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+        account.setBalance(newBalance);
+        account.setUpdatedAt(LocalDateTime.now());
+        accountRepository.save(account);
+
+        sendEvent("ACCOUNT_BALANCE_UPDATED", account.getId());
     }
 
     private void sendEvent(String eventType, Long accountId) {

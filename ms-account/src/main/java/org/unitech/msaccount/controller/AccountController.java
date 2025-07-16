@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.unitech.msaccount.model.dto.AccountDto;
 import org.unitech.msaccount.model.dto.request.CreateAccountRequest;
 import org.unitech.msaccount.model.dto.request.DepositRequest;
 import org.unitech.msaccount.model.dto.request.UpdatePinRequest;
 import org.unitech.msaccount.model.dto.response.AccountResponse;
 import org.unitech.msaccount.service.AccountService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -55,9 +57,21 @@ public class AccountController {
         return ResponseEntity.ok(accountService.deposit(accountId, request));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}/details")
+    public ResponseEntity<AccountDto> getAccountDetails(@PathVariable Long id) {
+        AccountDto account = accountService.getAccountDetails(id);
+        return ResponseEntity.ok(account);
+    }
+
+    @GetMapping("/{id}")
     public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
-        AccountResponse accountResponse = accountService.getAccountById(id);
-        return ResponseEntity.ok(accountResponse);
+        AccountResponse account = accountService.getAccountById(id);
+        return ResponseEntity.ok(account);
+    }
+
+    @PutMapping("{id}/{amount}")
+    public ResponseEntity<Void> updateBalance(@PathVariable Long id, @PathVariable BigDecimal amount) {
+        accountService.updateBalance(id, amount);
+        return ResponseEntity.ok().build();
     }
 }
