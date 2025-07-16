@@ -69,7 +69,7 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    @PutMapping("{id}/{amount}")
+    @PutMapping("/{id}/{amount}")
     public ResponseEntity<Void> updateBalance(@PathVariable Long id, @PathVariable BigDecimal amount) {
         accountService.updateBalance(id, amount);
         return ResponseEntity.ok().build();
