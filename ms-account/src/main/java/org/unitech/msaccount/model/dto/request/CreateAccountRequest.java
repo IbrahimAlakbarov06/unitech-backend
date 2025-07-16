@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.unitech.msaccount.model.enums.Currency;
+
 
 @Data
 @AllArgsConstructor
@@ -11,4 +13,7 @@ import lombok.NoArgsConstructor;
 public class CreateAccountRequest {
     @NotNull(message = "User ID is required")
     private Long userId;
+
+    @NotNull(message = "Currency is required")
+    private Currency currency;
 }
