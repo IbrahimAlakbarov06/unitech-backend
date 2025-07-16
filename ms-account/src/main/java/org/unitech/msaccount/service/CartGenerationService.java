@@ -20,17 +20,15 @@ public class CartGenerationService {
         accountDto.setPin(pinGenerator());
         return accountDto;
     }
-
     private String cartGenerator() {
-        return "41697388" + String.format("%008d", (long) (random.nextDouble() * 100000000L));
+        return "41697388" + String.format("%08d", random.nextInt(100000000));
     }
 
-
     private String pinGenerator() {
-        return String.valueOf(100+random.nextInt(900));
+        return String.format("%04d", 1000 + random.nextInt(9000));
     }
 
     private String cvvGenerator() {
-        return String.valueOf(100+ random.nextInt(9000));
+        return String.format("%03d", 100 + random.nextInt(900));
     }
 }
