@@ -17,7 +17,5 @@ public class AccountResponse {
     private String cartNumber;
     private BigDecimal balance;
     private AccountStatus accountStatus;
-    private String pin;
-    private String cvv;
     private LocalDateTime createdAt;
 }

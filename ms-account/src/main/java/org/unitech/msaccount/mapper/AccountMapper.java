@@ -73,27 +73,4 @@ public class AccountMapper {
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
-
-    public void updateEntity(AccountDto dto, Account entity) {
-        if (dto == null || entity == null) {
-            return;
-        }
-
-        if (dto.getCartNumber() != null) {
-            entity.setCartNumber(dto.getCartNumber());
-        }
-        if (dto.getBalance() != null) {
-            entity.setBalance(dto.getBalance());
-        }
-        if (dto.getAccountStatus() != null) {
-            entity.setStatus(dto.getAccountStatus());
-        }
-        if (dto.getPin() != null) {
-            entity.setPin(dto.getPin());
-        }
-        if (dto.getCvv() != null) {
-            entity.setCvv(dto.getCvv());
-        }
-        entity.setUpdatedAt(LocalDateTime.now());
-    }
 }
