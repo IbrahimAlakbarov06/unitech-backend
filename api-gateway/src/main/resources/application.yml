@@ -19,14 +19,14 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         - id: account-service
           uri: lb://ms-account
           predicates:
             - Path=/api/accounts/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: AuthFilter
 
         - id: transfer-service
@@ -34,7 +34,7 @@ spring:
           predicates:
             - Path=/api/transfers/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: AuthFilter
 
         - id: currency-service
@@ -42,14 +42,14 @@ spring:
           predicates:
             - Path=/api/currency/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         - id: bff-service
           uri: lb://ms-bff
           predicates:
             - Path=/api/dashboard/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: AuthFilter
 
 eureka:

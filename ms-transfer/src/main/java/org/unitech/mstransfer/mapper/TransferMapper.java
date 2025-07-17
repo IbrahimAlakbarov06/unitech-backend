@@ -14,11 +14,10 @@ public class TransferMapper {
 
     public Transfer toEntity(TransferRequest request) {
         Transfer transfer = new Transfer();
+
         transfer.setFromAccountId(request.getFromAccountId());
         transfer.setToAccountId(request.getToAccountId());
         transfer.setAmount(request.getAmount());
-        transfer.setCurrencyFrom(request.getCurrencyFrom());
-        transfer.setCurrencyTo(request.getCurrencyTo());
         transfer.setDescription(request.getDescription());
         transfer.setCreatedAt(LocalDateTime.now());
         return transfer;

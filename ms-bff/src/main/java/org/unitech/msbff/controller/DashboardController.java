@@ -27,19 +27,19 @@ public class DashboardController {
         return ResponseEntity.ok(dashboard);
     }
 
-    @GetMapping("/accounts/{accountId}")
+    @GetMapping("/account/{accountId}")
     public ResponseEntity<AccountResponse> getAccountDetails(@PathVariable Long accountId) {
         AccountResponse account = accountSummaryService.getAccountDetails(accountId);
         return ResponseEntity.ok(account);
     }
 
-    @GetMapping("/accounts/{accountId}/transfers")
+    @GetMapping("/account/{accountId}/transfers")
     public ResponseEntity<List<TransferResponse>> getAccountTransfers(@PathVariable Long accountId) {
         List<TransferResponse> transfers = accountSummaryService.getAccountTransfers(accountId);
         return ResponseEntity.ok(transfers);
     }
 
-    @GetMapping("/users/{userId}/accounts")
+    @GetMapping("/user/{userId}/accounts")
     public ResponseEntity<List<AccountResponse>> getUserAccounts(@PathVariable Long userId) {
         List<AccountResponse> accounts = accountSummaryService.getUserAccounts(userId);
         return ResponseEntity.ok(accounts);

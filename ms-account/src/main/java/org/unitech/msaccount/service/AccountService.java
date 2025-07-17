@@ -40,13 +40,13 @@ public class AccountService {
             throw new NotFoundException(e.getMessage());
         }
 
-        AccountDto accountDto = cartGenerationService.createCart();
+        AccountDto accountDto = cartGenerationService.createCart(request.getCurrency());
 
         Account account = accountMapper.toEntity(accountDto);
         account.setUserId(request.getUserId());
 
         while (accountRepository.existsByCartNumber(account.getCartNumber())) {
-            accountDto = cartGenerationService.createCart();
+            accountDto = cartGenerationService.createCart(request.getCurrency());
             account.setCartNumber(accountDto.getCartNumber());
         }
 

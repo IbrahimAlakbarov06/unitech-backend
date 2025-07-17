@@ -20,7 +20,7 @@ public class AccountSummaryService {
 
     public AccountResponse getAccountDetails(Long accountId) {
         try {
-            return accountClient.getAccountById(accountId);
+            return accountClient.getAccountDetails(accountId);
         } catch (Exception e) {
             throw new NotFoundException("Account not found");
         }
