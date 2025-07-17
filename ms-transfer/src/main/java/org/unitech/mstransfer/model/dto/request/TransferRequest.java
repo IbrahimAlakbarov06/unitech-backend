@@ -23,11 +23,5 @@ public class TransferRequest {
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
 
-    @NotNull(message = "Currency from is required")
-    private String currencyFrom;
-
-    @NotNull(message = "Currency to is required")
-    private String currencyTo;
-
     private String description;
 }

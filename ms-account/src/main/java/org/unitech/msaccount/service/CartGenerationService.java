@@ -3,6 +3,7 @@ package org.unitech.msaccount.service;
 import org.springframework.stereotype.Service;
 import org.unitech.msaccount.model.dto.AccountDto;
 import org.unitech.msaccount.model.enums.AccountStatus;
+import org.unitech.msaccount.model.enums.Currency;
 
 import java.math.BigDecimal;
 import java.util.Random;
@@ -11,11 +12,12 @@ import java.util.Random;
 public class CartGenerationService {
     private final Random random = new Random();
 
-    public AccountDto createCart() {
+    public AccountDto createCart(Currency currency ) {
         AccountDto accountDto = new AccountDto();
         accountDto.setCartNumber(cartGenerator());
         accountDto.setAccountStatus(AccountStatus.ACTIVE);
         accountDto.setBalance(BigDecimal.valueOf(0));
+        accountDto.setCurrency(currency);
         accountDto.setCvv(cvvGenerator());
         accountDto.setPin(pinGenerator());
         return accountDto;

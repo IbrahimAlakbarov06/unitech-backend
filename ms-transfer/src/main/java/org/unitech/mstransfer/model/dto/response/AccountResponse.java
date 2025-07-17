@@ -15,4 +15,5 @@ public class AccountResponse {
     private String cartNumber;
     private BigDecimal balance;
     private String accountStatus;
+    private String currency;
 }
