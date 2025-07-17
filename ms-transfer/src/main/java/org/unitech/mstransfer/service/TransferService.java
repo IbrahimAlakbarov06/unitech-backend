@@ -39,7 +39,11 @@ public class TransferService {
             throw new InvalidTransferException("Cannot transfer to the same account");
         }
 
-        CurrencyResponse currencyResponse = currencyService.getExchangeRate(transferRequest.getCurrencyFrom(), transferRequest.getCurrencyTo());
+        String currencyFrom = fromAccount.getCurrency();
+        String currencyTo = toAccount.getCurrency();
+
+
+        CurrencyResponse currencyResponse = currencyService.getExchangeRate(currencyFrom, currencyTo);
 
         BigDecimal convertedAmount = transferRequest.getAmount().multiply(currencyResponse.getRate());
 
@@ -48,7 +52,9 @@ public class TransferService {
         }
 
         Transfer transfer = transferMapper.toEntity(transferRequest);
-        transfer.setUserId(fromAccount.getId());
+        transfer.setUserId(fromAccount.getUserId());
+        transfer.setCurrencyFrom(fromAccount.getCurrency());
+        transfer.setCurrencyTo(toAccount.getCurrency());
         transfer.setExchangeRate(currencyResponse.getRate());
         transfer.setConvertedAmount(convertedAmount);
         transfer.setStatus(TransferStatus.PENDING);
@@ -58,6 +64,8 @@ public class TransferService {
         sendEvent("TRANSFER_INITIATED", savedTransfer.getId());
 
         try {
+            updateAccountBalances(fromAccount, toAccount, transferRequest.getAmount(), convertedAmount);
+
             savedTransfer.setStatus(TransferStatus.COMPLETED);
             transferDao.save(savedTransfer);
 
@@ -91,11 +99,16 @@ public class TransferService {
 
     private AccountResponse getAccount(Long accountId) {
         try {
-            return accountService.getAccountById(accountId);
+            AccountResponse account = accountService.getAccountById(accountId);
+            if (!account.getAccountStatus().equals("ACTIVE")) {
+                throw new IllegalArgumentException("Account is not ACTIVE");
+            }
+            return account;
         } catch (Exception e) {
             throw new NotFoundException("Account not found with id " + accountId);
         }
     }
+
     private void sendEvent(String eventType, Long transferId) {
         try {
             String message = eventType + ": " + transferId + " at " + System.currentTimeMillis();
@@ -103,6 +116,18 @@ public class TransferService {
             log.info("Event sent: {}", message);
         } catch (Exception e) {
             log.warn("Failed to send event to RabbitMQ: {}", e.getMessage());
+        }
+    }
+
+    private void updateAccountBalances(AccountResponse fromAccount, AccountResponse toAccount,
+                                       BigDecimal amount, BigDecimal convertedAmount) {
+        try {
+            accountService.updateBalance(fromAccount.getId(), amount.negate());
+
+            accountService.updateBalance(toAccount.getId(), convertedAmount);
+
+        } catch (Exception e) {
+            throw new InvalidTransferException("Failed to update account balances: " + e.getMessage());
         }
     }
 }

@@ -13,6 +13,6 @@ public interface AccountClient {
     @GetMapping("/user/{userId}")
     List<AccountResponse> getUserAccounts(@PathVariable Long userId);
 
-    @GetMapping("/{id}")
-    AccountResponse getAccountById(@PathVariable Long id);
+    @GetMapping("/{id}/details")
+    AccountResponse getAccountDetails(@PathVariable Long id);
 }
